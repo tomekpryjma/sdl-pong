@@ -28,6 +28,11 @@ void Ball::update()
 void Ball::draw()
 {
 	SDL_RenderDrawRect(renderer, &rect);
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+#if DEBUG_MODE
+	SDL_RenderDrawLine(renderer, rect.x, rect.y, rect.x + (15 * direction.x), rect.y + (10 * direction.y));
+#endif
 }
 
 void Ball::checkBounds()
