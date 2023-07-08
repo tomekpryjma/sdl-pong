@@ -22,25 +22,39 @@ void Paddle::boundsCheck()
 	}
 
 }
-// @TODO: Fix paddle trajectory movement based on ball position.
+
+// TODO: Add margin of error for CPU paddle movement so it doesn't always hit the ball back.
 void Paddle::update(Vec2 ballPosition, Vec2 ballDirection)
 {
-	if (ballDirection.x != 1) {
+	// Don't bother running this calculation of the ball is going towards player.
+	if (ballDirection.x < 0) {
 		return;
 	}
 
-	float denominator = (ballPosition.x + ballDirection.x) - ballPosition.x;
+	float x1 = ballPosition.x + BALL_SIZE;
+	float y1 = ballPosition.y + BALL_SIZE;
+	float x2 = x1 + ballDirection.x;
+	float y2 = y1 + ballDirection.y;
+	float x3 = WIDTH;
+	float y3 = 0;
+	float x4 = WIDTH;
+	float y4 = HEIGHT;
+	float denominator = ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4));
 
 	if (denominator == 0) {
 		return;
 	}
 
-	float ballBottom = ballPosition.y + BALL_SIZE;
-	float ballRight = ballPosition.x + BALL_SIZE;
+	float t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denominator;
+	float u = ((x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2)) / denominator;
 
-	float m = ((ballBottom + ballDirection.y) - ballBottom) / abs((int)denominator);
-	float yIntercept = (HEIGHT - ballBottom) - (m * (WIDTH - ballRight));
-	rect.y = abs((int)yIntercept - BALL_SIZE);
+	/**
+	* Ball trajectory to right-side of screen happens when the below is true.
+	*/
+	if (u >= 0 && u <= 1) {
+		yPos = (y3 + u * (y4 - y3)) - BALL_SIZE * 2;
+		rect.y = yPos;
+	}
 }
 
 void Paddle::draw()
