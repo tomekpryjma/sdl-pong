@@ -26,7 +26,7 @@ void Paddle::boundsCheck()
 // TODO: Add margin of error for CPU paddle movement so it doesn't always hit the ball back.
 void Paddle::update(Vec2 ballPosition, Vec2 ballDirection)
 {
-	// Don't bother running this calculation of the ball is going towards player.
+	// Don't bother running this calculation if the ball is going towards player.
 	if (ballDirection.x < 0) {
 		return;
 	}
