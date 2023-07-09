@@ -3,6 +3,8 @@
 #include <SDL.h>
 #include "Vec2.h"
 #include "globals.h"
+#include "Clock.h"
+#include <iostream>
 
 class Paddle
 {
@@ -20,5 +22,6 @@ public:
 	void boundsCheck();
 	void update(Vec2 ballPosition, Vec2 ballDirection);
 	void draw();
+	void move(float targetY);
 };
 

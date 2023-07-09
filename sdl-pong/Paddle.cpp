@@ -31,8 +31,8 @@ void Paddle::update(Vec2 ballPosition, Vec2 ballDirection)
 		return;
 	}
 
-	float x1 = ballPosition.x + BALL_SIZE;
-	float y1 = ballPosition.y + BALL_SIZE;
+	float x1 = ballPosition.x + BALL_SIZE / 2;
+	float y1 = ballPosition.y + BALL_SIZE / 2;
 	float x2 = x1 + ballDirection.x;
 	float y2 = y1 + ballDirection.y;
 	float x3 = WIDTH;
@@ -45,15 +45,18 @@ void Paddle::update(Vec2 ballPosition, Vec2 ballDirection)
 		return;
 	}
 
-	float t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denominator;
 	float u = ((x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2)) / denominator;
 
 	/**
 	* Ball trajectory to right-side of screen happens when the below is true.
+	* Checking for an intersection for the ray cast from the ball (t) is not needed
+	* since this calculation won't run if the ball is travelling in the player's
+	* direction anyways.
+	* So we're just checking to see if a line intersection happens on the
+	* right hand side of the screen.
 	*/
 	if (u >= 0 && u <= 1) {
-		yPos = (y3 + u * (y4 - y3)) - BALL_SIZE * 2;
-		rect.y = yPos;
+		move((y3 + u * (y4 - y3)) - PADDLE_HEIGHT / 2);
 	}
 }
 
@@ -61,4 +64,23 @@ void Paddle::draw()
 {
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 	SDL_RenderDrawRect(renderer, &rect);
+}
+
+void Paddle::move(float targetY)
+{
+	// @TODO: this is broadly working, would be good to tweak with the
+	// movement a bit to make it "nicer".
+	Vec2 target(0, targetY);
+	float diffY = target.y - yPos;
+	float distance = sqrt(pow(diffY, 2));
+
+	if (distance < 0.5) {
+		return;
+	}
+
+	Vec2 direction(0, targetY - yPos);
+	direction.normalise();
+
+	yPos += direction.y * speed * Clock::delta;
+	rect.y = yPos;
 }
