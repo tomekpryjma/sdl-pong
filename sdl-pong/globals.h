@@ -6,3 +6,4 @@
 #define PADDLE_HEIGHT 50
 #define BALL_SIZE 10
 #define DEBUG_MODE false
+#define FPS_60_LIMIT 0.016
