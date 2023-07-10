@@ -45,9 +45,10 @@ SDL_Renderer* App::getRenderer()
 	return renderer;
 }
 
-void App::loop(std::shared_ptr<Player>& player, std::shared_ptr<Paddle>& paddle, Ball ball)
+void App::loop(std::shared_ptr<Player>& player, std::shared_ptr<Paddle>& paddle, Ball ball, Scoring scoring)
 {
 	SDL_Event e;
+	Uint32 hasScoredTimeout = 0;
 
 	while (isRunning) {
 		Clock::tick();
@@ -63,6 +64,23 @@ void App::loop(std::shared_ptr<Player>& player, std::shared_ptr<Paddle>& paddle,
 		ball.update();
 		player->update(keyStates);
 		paddle->update(ball.getPosition(), ball.getDirection());
+
+		if (ball.getScorer() & (Scorer::CPU | Scorer::PLAYER)) {
+			hasScoredTimeout = SDL_GetTicks();
+			Scorer scorer = ball.getScorer();
+			scoring.incrementScore(scorer);
+			ball.resetAfterScore();
+			player->reset();
+			paddle->reset();
+		}
+
+		// TODO: maybe move this to the Scoring class for cleanliness.
+		if (hasScoredTimeout != 0) {
+			if (SDL_GetTicks() > hasScoredTimeout + 2000) {
+				ball.startMoving();
+				hasScoredTimeout = 0;
+			}
+		}
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);

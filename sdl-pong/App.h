@@ -7,6 +7,7 @@
 #include "Clock.h"
 #include "Ball.h"
 #include "globals.h"
+#include "Scoring.h"
 
 class App
 {
@@ -22,7 +23,7 @@ public:
 	void quit();
 	void quit(int status);
 	void shutdown();
-	void loop(std::shared_ptr<Player> &player, std::shared_ptr<Paddle> &paddle, Ball ball);
+	void loop(std::shared_ptr<Player> &player, std::shared_ptr<Paddle> &paddle, Ball ball, Scoring scoring);
 	SDL_Renderer* getRenderer();
 };
 
