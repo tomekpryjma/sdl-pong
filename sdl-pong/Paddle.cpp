@@ -5,6 +5,7 @@ Paddle::Paddle(int x, int y, SDL_Renderer* appRenderer)
 	rect.x = x;
 	rect.y = y;
 	yPos = y;
+	initialYPos = y;
 	rect.w = PADDLE_WIDTH;
 	rect.h = PADDLE_HEIGHT;
 	color.r = 255;
@@ -82,5 +83,11 @@ void Paddle::move(float targetY)
 	direction.normalise();
 
 	yPos += direction.y * speed * Clock::delta;
+	rect.y = yPos;
+}
+
+void Paddle::reset()
+{
+	yPos = initialYPos;
 	rect.y = yPos;
 }

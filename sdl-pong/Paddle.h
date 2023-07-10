@@ -10,6 +10,7 @@ class Paddle
 {
 protected:
 	float yPos = 0;
+	float initialYPos = 0;
 	float speed = 300;
 public:
 	SDL_Rect rect;
@@ -23,5 +24,6 @@ public:
 	void update(Vec2 ballPosition, Vec2 ballDirection);
 	void draw();
 	void move(float targetY);
+	void reset();
 };
 
