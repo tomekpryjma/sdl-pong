@@ -12,6 +12,8 @@ Ball::Ball(int x, int y, std::shared_ptr<Player> &pad1, std::shared_ptr<Paddle> 
 	direction.y = 0;
 	position.x = x;
 	position.y = y;
+	initialPosition.x = x;
+	initialPosition.y = y;
 }
 
 void Ball::update()
@@ -42,6 +44,13 @@ void Ball::checkBounds()
 	}
 	else if (rect.y > HEIGHT) {
 		direction.y = -1;
+	}
+
+	if (rect.x < 0) {
+		scorer = Scorer::CPU;
+	}
+	else if (rect.x > WIDTH) {
+		scorer = Scorer::PLAYER;
 	}
 }
 
@@ -76,4 +85,26 @@ Vec2 Ball::getPosition()
 Vec2 Ball::getDirection()
 {
 	return direction;
+}
+
+Scorer Ball::getScorer()
+{
+	return scorer;
+}
+
+void Ball::resetAfterScore()
+{
+	scorer = Scorer::NONE;
+	direction.x = 0;
+	direction.y = 0;
+	position.x = initialPosition.x;
+	position.y = initialPosition.y;
+	rect.x = position.x;
+	rect.y = position.y;
+}
+
+void Ball::startMoving()
+{
+	Uint8 random = rand() % 2; // 0 or 1
+	direction.x = random == 0 ? -1 : 1;
 }
