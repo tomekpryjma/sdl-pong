@@ -7,6 +7,11 @@ App::App()
 		quit(1);
 	}
 
+	if (TTF_Init() != 0) {
+		SDL_Log("Could not initialise TTF: %s\n", SDL_GetError());
+		quit(1);
+	}
+
 	if (SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer) != 0) {
 		sdlError();
 		quit(1);
@@ -33,6 +38,7 @@ void App::sdlError()
 
 void App::shutdown()
 {
+	TTF_Quit();
 	SDL_Quit();
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
@@ -50,11 +56,25 @@ void App::loop(std::shared_ptr<Player>& player, std::shared_ptr<Paddle>& paddle,
 	SDL_Event e;
 	Uint32 hasScoredTimeout = 0;
 
+	TTF_Font *font = TTF_OpenFont("fonts/LilitaOne-Regular.ttf", 18);
+	if (font == NULL) {
+		SDL_Log("TTF_OpenFont problem: %s\n", SDL_GetError());
+		quit(1);
+	}
+
+	SDL_Color textColour = {255,0,0,255};
+	SDL_Surface* textSurface = TTF_RenderText_Solid(font, "Hello world!", textColour);
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_Rect textRect = {40,40,100,18};
+	SDL_FreeSurface(textSurface);
+
 	while (isRunning) {
 		Clock::tick();
 
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
+				SDL_DestroyTexture(textTexture);
+				TTF_CloseFont(font);
 				quit();
 			}
 		}
@@ -88,6 +108,8 @@ void App::loop(std::shared_ptr<Player>& player, std::shared_ptr<Paddle>& paddle,
 		player->draw();
 		paddle->draw();
 		ball.draw();
+
+		SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
 		SDL_RenderPresent(renderer);
 	}

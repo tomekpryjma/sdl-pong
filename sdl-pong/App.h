@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include "Paddle.h"
 #include "Player.h"
 #include "Clock.h"
